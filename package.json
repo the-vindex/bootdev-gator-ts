@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "tsx ./src/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate": "drizzle-kit generate",
+    "migrate": "drizzle-kit migrate"
   },
   "keywords": [],
   "author": "",
@@ -13,7 +15,12 @@
   "description": "",
   "devDependencies": {
     "@types/node": "^22.15.29",
+    "drizzle-kit": "^0.31.1",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.44.1",
+    "postgres": "^3.4.7"
   }
 }
