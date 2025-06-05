@@ -1,0 +1,20 @@
+import { db } from "..";
+import { users } from "../schema";
+import {eq} from "drizzle-orm/sql/expressions/conditions";
+
+export async function createUser(name: string) {
+    try {
+        const [result] = await db.insert(users).values({name: name}).returning();
+        return result;
+    } catch (error) {
+        if (error instanceof Error && error.message.includes('Failed query: insert into "users"')) {
+            throw new Error("User already exists");
+        }
+        throw error;
+    }
+}
+
+export async function getUserByName(name: string){
+    const [result] = await db.select().from(users).where(eq(users.name, name));
+    return result
+}

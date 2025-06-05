@@ -1,6 +1,7 @@
 import {Config} from "../config.js";
+import {getUserByName} from "../lib/db/queries/users";
 
-export function login(cmdName: string, ...args: string[]) {
+export async function login(cmdName: string, ...args: string[]) {
     console.log("Login command called with args", args);
 
     if (args.length === 0) {
@@ -8,9 +9,16 @@ export function login(cmdName: string, ...args: string[]) {
         return 1;
     }
 
-    console.log("Setting user to", args[0]);
-    const config = Config.readConfig();
-    config.setUser(args[0]);
+    const username = args[0];
+    const user = await getUserByName(username);
 
-    return 0
+    if (!user) {
+        throw new Error("User does not exist");
+    } else {
+        console.log("Setting user to", username);
+        const config = Config.readConfig();
+        config.setUser(username);
+
+        return 0;
+    }
 }

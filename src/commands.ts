@@ -1,4 +1,4 @@
-export type CommandHandler = (cmdName: string, ...args: string[]) => number;
+export type CommandHandler = (cmdName: string, ...args: string[]) => Promise<number>;
 
 export type CommandRegistry = {
     [cmdName: string]: CommandHandler;
@@ -8,10 +8,10 @@ export function registerCommands(registry: CommandRegistry, cmdnName:string, cmd
     registry[cmdnName] = cmdHandler;
 }
 
-export function runCommand(registry: CommandRegistry, cmdName: string, ...args: string[]) {
+export async function runCommand(registry: CommandRegistry, cmdName: string, ...args: string[]) {
     const cmdHandler = registry[cmdName];
     if (cmdHandler) {
-        return cmdHandler(cmdName, ...args);
+        return await cmdHandler(cmdName, ...args);
     } else{
         console.log(`Unknown command ${cmdName}`);
         return 1;
