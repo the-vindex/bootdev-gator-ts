@@ -1,8 +1,8 @@
-import {describe, it, expect, beforeEach} from 'vitest';
+import {beforeEach, describe, expect, it} from 'vitest';
 import {db} from '../src/lib/db';
 import {users} from '../src/lib/db/schema';
 import {runCommandFromArgs} from "../src/commands_execution";
-import {createUser, getUserByName} from "../src/lib/db/queries/users";
+import {countUsers, createUser, getUserByName} from "../src/lib/db/queries/users";
 
 describe('Command Integration Tests', () => {
     beforeEach(async () => {
@@ -46,5 +46,14 @@ describe('Command Integration Tests', () => {
         expect(exitCode).toBe(0);
 
         await expect(runCommandFromArgs('register', ['testuser'])).rejects.toThrow('User already exists');
+    })
+
+    it('should handle deleting all users', async () => {
+        await runCommandFromArgs('register', ['testuser']);
+        expect(await countUsers()).toBe(1);
+
+        const exitCode = await runCommandFromArgs('reset', []);
+        expect(exitCode).toBe(0);
+        expect(await countUsers()).toBe(0);
     })
 });

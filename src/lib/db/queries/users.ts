@@ -1,6 +1,7 @@
-import { db } from "..";
-import { users } from "../schema";
+import {db} from "..";
+import {users} from "../schema";
 import {eq} from "drizzle-orm/sql/expressions/conditions";
+import {count} from "drizzle-orm/sql/functions/aggregate";
 
 export async function createUser(name: string) {
     try {
@@ -17,4 +18,20 @@ export async function createUser(name: string) {
 export async function getUserByName(name: string){
     const [result] = await db.select().from(users).where(eq(users.name, name));
     return result
+}
+
+export async function deleteUsers(){
+    try {
+        await db.delete(users);
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(`Failed to delete users: ${error.message}`);
+        }
+        throw error;
+    }
+}
+
+export async function countUsers() {
+    const result = await db.select({value: count()}).from(users);
+    return result[0].value;
 }
