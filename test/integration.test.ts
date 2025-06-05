@@ -1,4 +1,4 @@
-import {beforeEach, describe, expect, it} from 'vitest';
+import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {db} from '../src/lib/db';
 import {users} from '../src/lib/db/schema';
 import {runCommandFromArgs} from "../src/commands_execution";
@@ -10,6 +10,10 @@ describe('Command Integration Tests', () => {
         await db.delete(users);
 
         //config file contains connection string, can't it cleanup, but that's ok for now
+    });
+
+    afterEach(async () => {
+       vi.resetAllMocks();
     });
 
     it('should execute login command successfully', async () => {
@@ -55,5 +59,22 @@ describe('Command Integration Tests', () => {
         const exitCode = await runCommandFromArgs('reset', []);
         expect(exitCode).toBe(0);
         expect(await countUsers()).toBe(0);
+    })
+    
+    it('should list users from the database', async () => {
+        await runCommandFromArgs('register', ['testuser']);
+        await runCommandFromArgs('register', ['testuser2']);
+        await runCommandFromArgs('register', ['testuser3']);
+        await runCommandFromArgs('login', ['testuser2']);
+
+        let good = false;
+        vi.spyOn(console, "log").mockImplementation((...data) => {
+            if (data[0] === '* testuser2 (current)') {
+                good = true;
+            }
+        })
+        await runCommandFromArgs('users', []);
+
+        expect(good).toBeTruthy();
     })
 });

@@ -35,3 +35,7 @@ export async function countUsers() {
     const result = await db.select({value: count()}).from(users);
     return result[0].value;
 }
+
+export async function getUsers() {
+    return await db.select().from(users);
+}
