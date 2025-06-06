@@ -1,6 +1,7 @@
 import {db} from "..";
-import {feeds} from "../schema";
+import {feeds, users} from "../schema";
 import {User} from "./users";
+import {eq} from "drizzle-orm/sql/expressions/conditions";
 
 
 export type Feed = typeof feeds.$inferSelect;
@@ -22,8 +23,20 @@ export async function getFeeds() {
     return db.select().from(feeds);
 }
 
+export async function getFeedsWithUser(user_id?: string) {
+    const query = db.select({
+        feedName: feeds.name,
+        feedUrl: feeds.url,
+        username: users.name
+    }).from(feeds).innerJoin(users, eq(feeds.user_id,users.id));
+
+    if (user_id){
+        query.where(eq(feeds.user_id, user_id));
+    }
+
+    return query;
+}
+
 export async function printFeed(feed: Feed, user: User){
     console.log(`Feed ${feed.name} by ${user.name}: (${feed.url})`);
 }
-
-
