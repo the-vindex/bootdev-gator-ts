@@ -77,4 +77,13 @@ describe('Command Integration Tests', () => {
 
         expect(good).toBeTruthy();
     })
+
+
+    it('should get RSS feed from specified URL', async () => {
+        await runCommandFromArgs('register', ['testuser']);
+        await runCommandFromArgs('login', ['testuser']);
+        const exitCode = await runCommandFromArgs('agg', ['https://www.wagslane.dev/index.xml']);
+        expect(exitCode).toBe(0);
+
+    })
 });
