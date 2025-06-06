@@ -4,14 +4,14 @@ import * as os from "node:os";
 
 export class Config {
     dbUrl: string;
-    currentUserName: String;
+    currentUserName: string;
 
-    constructor(dbUrl: string, user: String) {
+    constructor(dbUrl: string, user: string) {
         this.dbUrl = dbUrl;
         this.currentUserName = user;
     }
 
-    setUser(user: String) {
+    setUser(user: string) {
         this.currentUserName = user;
         this.writeConfig();
     }

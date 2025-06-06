@@ -3,6 +3,8 @@ import {users} from "../schema";
 import {eq} from "drizzle-orm/sql/expressions/conditions";
 import {count} from "drizzle-orm/sql/functions/aggregate";
 
+export type User = typeof users.$inferSelect;
+
 export async function createUser(name: string) {
     try {
         const [result] = await db.insert(users).values({name: name}).returning();

@@ -8,6 +8,13 @@
       "when": 1748956051623,
       "tag": "0000_redundant_queen_noir",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1749206732158,
+      "tag": "0001_naive_synch",
+      "breakpoints": true
     }
   ]
 }

@@ -7,7 +7,7 @@ async function main() {
     console.log("No command specified");
     return 1;
   }
-  return await runCommandFromArgs(args[0], args.slice(1));
+  return await runCommandFromArgs(args[0], ...args.slice(1));
 }
 
 const errorCode = await main();
