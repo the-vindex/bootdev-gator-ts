@@ -9,7 +9,8 @@ export type Feed = typeof feeds.$inferSelect;
 export async function createFeed(name: string, url:string, user_id: string) {
 
     try {
-        return await db.insert(feeds).values({name: name, url: url, user_id: user_id}).returning();
+        const [feed] = await db.insert(feeds).values({name: name, url: url, user_id: user_id}).returning();
+        return feed;
     } catch (error) {
         if (error instanceof Error && error.message.includes('Failed query: insert into "feeds"')) {
             console.error(`Failed to add feed: ${error.message}`);

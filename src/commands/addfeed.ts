@@ -1,20 +1,21 @@
-import {createFeed} from "../lib/db/queries/feeds";
-import {Config} from "../config";
-import {getUserByName} from "../lib/db/queries/users";
+import { getCurrentUser } from "../utils/get_current_user";
+import { createFeed } from "../lib/db/queries/feeds";
+import { createFeedFollow } from "../lib/db/queries/feeds_follow_queries";
 
-export async function addfeed(commandName: string, ...args: string[]) {
-    if (args.length < 2) {
-        console.warn("Name and URL must be specified");
+export async function addfeed(cmdname: string, name: string, url: string) {
+    const user = await getCurrentUser();
+    if (!user) {
+        console.log("You must be logged in to add feeds");
         return 1;
     }
 
-    const [name, url] = args;
+    const feed = await createFeed(name, url, user.id);
+    if (!feed) {
+        console.error("Failed to create feed");
+        return 1;
+    }
 
-    const username = Config.readConfig().currentUserName;
-    const user = await getUserByName(username);
-
-    await createFeed(name, url, user.id);
-    console.log(`Feed ${name} added with URL ${url}`);
-
+    await createFeedFollow(user.id, feed.id);
+    console.log(`User ${user.name} is now following feed ${feed.name}`);
     return 0;
 }

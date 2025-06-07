@@ -15,6 +15,13 @@
       "when": 1749206732158,
       "tag": "0001_naive_synch",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1749215190630,
+      "tag": "0002_acoustic_arachne",
+      "breakpoints": true
     }
   ]
 }
