@@ -4,6 +4,7 @@ import {createUser,} from "../src/lib/db/queries/users";
 import {getFeeds, getFeedsWithUser} from "../src/lib/db/queries/feeds";
 import {login} from "../src/commands/login";
 import {getFeedFollowsForUser} from "../src/lib/db/queries/feeds_follow_queries";
+import {createTwoUsersWithFeeds} from "./util/testDataFactory";
 
 describe('Feeds tests', () => {
 
@@ -63,27 +64,15 @@ describe('Feeds tests', () => {
     })
 
     it("Should follow other people feeds", async () => {
-        const user1_feed1_url = "https://www.wagslane.dev/index1.xml";
-        const user2_feed1_url = "https://www.wagslane.dev/index2.xml";
-        const user1_name = 'testuser1';
-        const user2_name = 'testuser2';
+        const {t, user1, user2} = await createTwoUsersWithFeeds();
 
 
-        await createUser(user1_name);
-        await runCommandFromArgs('login', user1_name);
-        await runCommandFromArgs('addfeed', "user1_feed1", user1_feed1_url);
-
-
-        const user2 = await createUser(user2_name);
-        await runCommandFromArgs('login', user2_name);
-        await runCommandFromArgs('addfeed', "user2_feed1", user2_feed1_url);
-
-        await runCommandFromArgs('follow', user1_feed1_url);
+        await runCommandFromArgs('follow', t.user1FeedUrl);
 
         const feedFollows = await getFeedFollowsForUser(user2.id);
         expect(feedFollows).length(2);
-        expect(feedFollows[0].feedUrl).toBe(user2_feed1_url);
-        expect(feedFollows[1].feedUrl).toBe(user1_feed1_url);
+        expect(feedFollows[0].feedUrl).toBe(t.user2FeedUrl);
+        expect(feedFollows[1].feedUrl).toBe(t.user1FeedUrl);
 
     });
 });

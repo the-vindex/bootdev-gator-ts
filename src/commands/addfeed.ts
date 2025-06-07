@@ -1,12 +1,10 @@
 import { getCurrentUser } from "../utils/get_current_user";
 import { createFeed } from "../lib/db/queries/feeds";
 import { createFeedFollow } from "../lib/db/queries/feeds_follow_queries";
+import {User} from "../lib/db/queries/users";
 
-export async function addfeed(cmdname: string, name: string, url: string) {
-    const user = await getCurrentUser();
-    if (!user) {
-        throw new Error("You must be logged in to add feeds");
-    }
+export async function addfeed(cmdname: string, user: User, ...args: string[]) {
+    const [name, url] = args;
 
     const feed = await createFeed(name, url, user.id);
     if (!feed) {
