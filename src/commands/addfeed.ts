@@ -5,8 +5,7 @@ import { createFeedFollow } from "../lib/db/queries/feeds_follow_queries";
 export async function addfeed(cmdname: string, name: string, url: string) {
     const user = await getCurrentUser();
     if (!user) {
-        console.log("You must be logged in to add feeds");
-        return 1;
+        throw new Error("You must be logged in to add feeds");
     }
 
     const feed = await createFeed(name, url, user.id);

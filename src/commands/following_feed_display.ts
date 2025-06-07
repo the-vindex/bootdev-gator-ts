@@ -4,8 +4,7 @@ import { getCurrentUser } from "../utils/get_current_user";
 export async function following() {
     const user = await getCurrentUser();
     if (!user) {
-        console.log("You must be logged in to see your followed feeds");
-        return 1;
+        throw new Error("You must be logged in to list your followed feeds");
     }
 
     const feedFollows = await getFeedFollowsForUser(user.id);
