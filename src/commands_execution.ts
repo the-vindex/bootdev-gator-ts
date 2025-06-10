@@ -9,6 +9,7 @@ import {feeds} from "./commands/feeds";
 import {follow} from "./commands/follow";
 import { following } from "./commands/following_feed_display";
 import {middlewareLoggedIn} from "./commands/middleware/middlewareLoggedIn";
+import {unfollow} from "./commands/unfollow";
 import {help} from "./commands/help";
 import {middlewareRegistryAware} from "./commands/middleware/middlewareRegistryAware";
 
@@ -27,6 +28,7 @@ export async function runCommandFromArgs(command: string, ...commandArguments: s
     registerCommands(registry, "feeds", feeds);
     registerCommands(registry, "follow", middlewareLoggedIn(follow));
     registerCommands(registry, "following", middlewareLoggedIn(following));
+    registerCommands(registry, "unfollow", middlewareLoggedIn(unfollow));
 
     console.log(`Running command ${command} with args ${commandArguments}`);
     return runCommand(registry, command, ...commandArguments);

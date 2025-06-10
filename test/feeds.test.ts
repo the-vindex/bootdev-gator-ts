@@ -75,4 +75,17 @@ describe('Feeds tests', () => {
         expect(feedFollows[1].feedUrl).toBe(t.user1FeedUrl);
 
     });
+
+    it("Should allow unfollowing", async () => {
+        const {t, user1, user2} = await createTwoUsersWithFeeds();
+
+        await runCommandFromArgs('follow', t.user1FeedUrl);
+        const followedFeeds = await getFeedFollowsForUser(user2.id);
+        expect(followedFeeds).length(2);
+
+        await runCommandFromArgs('unfollow', t.user1FeedUrl);
+        const feedsAfterUnfollow = await getFeedFollowsForUser(user2.id);
+        expect(feedsAfterUnfollow).length(1);
+        expect(feedsAfterUnfollow[0].feedUrl, "Should still follow my own feed").toBe(t.user2FeedUrl);
+    })
 });
