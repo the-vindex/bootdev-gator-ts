@@ -1,4 +1,4 @@
-import {fetchFeed} from "../../rss/rss";
+import {fetchFeed} from "../rss/rss";
 
 export async function agg(commandName: string, ...args: string[]) {
     if (args.length === 0) {

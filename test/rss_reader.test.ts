@@ -1,6 +1,6 @@
 //@ts-ignore
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
-import {fetchFeed} from "../rss/rss";
+import {fetchFeed} from "../src/rss/rss";
 
 describe('RSS Reader Tests', () => {
     it('should parse RSS feed', async () => {
