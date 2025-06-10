@@ -8,8 +8,6 @@ type UserCommandHandler = (
     ...args: string[]
 ) => Promise<number>;
 
-type middlewareLoggedIn = (handler: UserCommandHandler) => CommandHandler;
-
 export function middlewareLoggedIn(handler: UserCommandHandler): CommandHandler {
     return async (command: string, ...args)=>{
         const user = await getCurrentUser();

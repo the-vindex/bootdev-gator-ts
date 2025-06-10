@@ -9,12 +9,15 @@ import {feeds} from "./commands/feeds";
 import {follow} from "./commands/follow";
 import { following } from "./commands/following_feed_display";
 import {middlewareLoggedIn} from "./commands/middleware/middlewareLoggedIn";
+import {help} from "./commands/help";
+import {middlewareRegistryAware} from "./commands/middleware/middlewareRegistryAware";
 
 
 export type CommandName = keyof CommandRegistry & ("login" | "register" | "reset" | "users" | "agg" | "addfeed" | "feeds" | "follow" | "following");
 
 export async function runCommandFromArgs(command: string, ...commandArguments: string[]) {
     const registry: CommandRegistry = {};
+    registerCommands(registry, "help", middlewareRegistryAware(registry, help));
     registerCommands(registry, "login", login);
     registerCommands(registry, "register", register);
     registerCommands(registry, "reset", reset);
