@@ -12,6 +12,7 @@ import {middlewareLoggedIn} from "./commands/middleware/middlewareLoggedIn";
 import {unfollow} from "./commands/unfollow";
 import {help} from "./commands/help";
 import {middlewareRegistryAware} from "./commands/middleware/middlewareRegistryAware";
+import {browseCommand} from "./commands/browse";
 
 
 export type CommandName = keyof CommandRegistry & ("login" | "register" | "reset" | "users" | "agg" | "addfeed" | "feeds" | "follow" | "following");
@@ -29,6 +30,7 @@ export async function runCommandFromArgs(command: string, ...commandArguments: s
     registerCommands(registry, "follow", middlewareLoggedIn(follow));
     registerCommands(registry, "following", middlewareLoggedIn(following));
     registerCommands(registry, "unfollow", middlewareLoggedIn(unfollow));
+    registerCommands(registry, "browse", middlewareLoggedIn(browseCommand));
 
     console.log(`Running command ${command} with args ${commandArguments}`);
     return runCommand(registry, command, ...commandArguments);
