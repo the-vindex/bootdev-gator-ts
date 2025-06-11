@@ -1,7 +1,7 @@
 import {fetchFeed} from "../rss/rss";
 import {getNextFeedToFetch, markFeedAsFetched} from "../lib/db/queries/feeds";
 import {formatDuration, parseDuration} from "../utils/duration_parsing";
-import {createPost} from "../lib/db/queries/posts";
+import {createPost, DuplicatePostError} from "../lib/db/queries/posts";
 
 export async function agg(commandName: string, ...args: string[]) {
     if (args.length === 0) {
@@ -13,7 +13,9 @@ export async function agg(commandName: string, ...args: string[]) {
 
     console.log("Scraping feeds every", formatDuration(durationMs));
 
-    const handleError = (error: Error) => {throw error;};
+    const handleError = (error: Error) => {
+        throw error;
+    };
 
     scrapeFeeds().catch(handleError)
 
@@ -32,6 +34,10 @@ export async function agg(commandName: string, ...args: string[]) {
     return 0;
 }
 
+function unescapeAmpCharacters(str: string) {
+    return str?.replace(/&amp;/g, '&')?.replace(/&lt;/g, '<')?.replace(/&gt;/g, '>')?.replace(/&quot;/g, '"')?.replace(/&ndash;/g, "–")?.replace(/&mdash;/g, "--")?.replace(/&hellip;/g, "...")?.replace(/&rsquo;/g, "'");
+}
+
 export async function scrapeFeeds() {
     const feedToFetch = await getNextFeedToFetch();
     console.log("Fetching feed ", feedToFetch.url);
@@ -48,12 +54,16 @@ export async function scrapeFeeds() {
                 await createPost({
                     title: item.title,
                     url: item.link,
-                    description: item.description,
+                    description: unescapeAmpCharacters(item.description ?? ""),
                     published_at: item.pubDate ? new Date(item.pubDate) : null,
                     feed_id: feedToFetch.id
                 });
             } catch (error) {
-                console.error(`Failed to create post: ${error}`);
+                if (error instanceof DuplicatePostError){
+                    console.warn(error.message);
+                } else {
+                    throw error;
+                }
             }
             //TODO ignore duplicate URL errors
         }

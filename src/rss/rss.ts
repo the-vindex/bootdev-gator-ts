@@ -10,7 +10,10 @@ export async function fetchFeed(url: string): Promise<RSSFeed> {
     });
 
     const text = await response.text();
-    const parsedXml = new XMLParser().parse(text);
+    const options = {
+      isArray: (tagName: string) => tagName === 'item',
+    };
+    const parsedXml = new XMLParser(options).parse(text);
 
     const result  = {
         channel: {

@@ -3,6 +3,10 @@ import {db} from "..";
 import {NewPost, Post} from "../posts";
 import {feeds, posts} from "../schema";
 import {desc} from "drizzle-orm/sql/expressions/select";
+import {and} from "drizzle-orm";
+
+export class DuplicatePostError extends Error {
+}
 
 export async function createPost(post: NewPost) {
     // First check if feed exists
@@ -14,18 +18,25 @@ export async function createPost(post: NewPost) {
         throw new Error(`Feed with id ${post.feed_id} does not exist`);
     }
 
-
-    const [newPost] = await db.insert(posts)
-        .values(post)
-        .returning();
-    
-    return newPost;
+    const existingPosts = await db.select().from(posts).where(and(eq(posts.url, post.url), eq(posts.feed_id, post.feed_id)));
+    if (existingPosts.length > 0) {
+        throw new DuplicatePostError(`Post with url ${post.url} already exists in feed ${post.feed_id}`);
+    } else {
+        const [newPost] = await db.insert(posts)
+            .values(post)
+            .returning();
+        return newPost;
+    }
 }
 
 export async function getPostsForUser(
     userId: string,
     limit: number = 50
 ): Promise<Post[]> {
+    if (userId === undefined) {
+        throw new Error("User id is undefined");
+    }
+
     return db
         .select({
             id: posts.id,
