@@ -1,10 +1,8 @@
-import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
-import {db} from '../src/lib/db';
-import {users} from '../src/lib/db/schema';
+import {beforeEach, describe, expect, it} from 'vitest';
 import {runCommandFromArgs} from "../src/commands_execution";
-import {countUsers, createUser, getUserByName} from "../src/lib/db/queries/users";
-import { Config } from '../src/config';
-import {createTwoUsersWithFeeds} from "./util/testDataFactory";
+import {createUser} from "../src/lib/db/queries/users";
+import {Config} from '../src/config';
+import {createTwoUsersWithFeeds} from "./utils/testDataFactory";
 
 function logout() {
     Config.readConfig().setUser("");
@@ -23,6 +21,7 @@ describe('User Handling Tests', () => {
     });
 
     it("follow throws exception if not logged in", async () => {
+        // noinspection ES6ShorthandObjectProperty,JSUnusedLocalSymbols
         const {t, user1, user2} = await createTwoUsersWithFeeds();
         logout();
 
@@ -32,6 +31,7 @@ describe('User Handling Tests', () => {
 
 
     it("following throws exception if not logged in", async () => {
+        // noinspection ES6ShorthandObjectProperty,JSUnusedLocalSymbols
         const {t, user1, user2} = await createTwoUsersWithFeeds();
         logout();
 

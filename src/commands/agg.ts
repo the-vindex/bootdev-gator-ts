@@ -1,15 +1,50 @@
 import {fetchFeed} from "../rss/rss";
+import {getNextFeedToFetch, markFeedAsFetched} from "../lib/db/queries/feeds";
+import {formatDuration, parseDuration} from "../utils/duration_parsing";
 
 export async function agg(commandName: string, ...args: string[]) {
     if (args.length === 0) {
-        console.warn("No URL specified, defaulting to https://www.wagslane.dev/index.xml");
-        args.push("https://www.wagslane.dev/index.xml");
+        throw new Error("No duration specified.");
     }
 
-    const url = args[0];
-    const channel = await fetchFeed(url);
+    const duration = args[0];
+    const durationMs = parseDuration(duration);
 
-    console.log(channel);
+    console.log("Scraping feeds every", formatDuration(durationMs));
+
+    const handleError = (error: Error) => {throw error;};
+
+    scrapeFeeds().catch(handleError)
+
+    const interval = setInterval(() => {
+        scrapeFeeds().catch(handleError);
+    }, durationMs);
+
+    await new Promise<void>((resolve) => {
+        process.on("SIGINT", () => {
+            console.log("Shutting down feed aggregator...");
+            clearInterval(interval);
+            resolve();
+        });
+    });
 
     return 0;
+}
+
+export async function scrapeFeeds() {
+    const feedToFetch = await getNextFeedToFetch();
+    console.log("Fetching feed ", feedToFetch.url);
+    console.debug(feedToFetch);
+
+    await markFeedAsFetched(feedToFetch.id);
+    const fetchedFeed = await fetchFeed(feedToFetch.url);
+    const feedItems = fetchedFeed.channel.item;
+
+    if (feedItems.length > 0) {
+        console.log(`Found ${feedItems.length} items`);
+        feedItems.forEach(item => {
+            console.log(`- ${item.title}`)
+        });
+    }
+
 }

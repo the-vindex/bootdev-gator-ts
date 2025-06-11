@@ -3,8 +3,8 @@ import {runCommandFromArgs} from "../../src/commands_execution";
 
 export async function createTwoUsersWithFeeds() {
     const t = {
-        user1FeedUrl: "https://www.wagslane.dev/index1.xml",
-        user2FeedUrl: "https://www.wagslane.dev/index2.xml",
+        user1FeedUrl: "https://www.wagslane.dev/index.xml?1",
+        user2FeedUrl: "https://www.wagslane.dev/index.xml?2",
         user1Name: 'testuser1',
         user2Name: 'testuser2'
     };

@@ -1,10 +1,12 @@
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {runCommandFromArgs} from "../src/commands_execution";
 import {createUser,} from "../src/lib/db/queries/users";
-import {getFeeds, getFeedsWithUser} from "../src/lib/db/queries/feeds";
+import {getFeeds, getFeedsWithUser, getNextFeedToFetch, markFeedAsFetched} from "../src/lib/db/queries/feeds";
 import {login} from "../src/commands/login";
 import {getFeedFollowsForUser} from "../src/lib/db/queries/feeds_follow_queries";
-import {createTwoUsersWithFeeds} from "./util/testDataFactory";
+import {createTwoUsersWithFeeds} from "./utils/testDataFactory";
+import {scrapeFeeds} from "../src/commands/agg";
+
 
 describe('Feeds tests', () => {
 
@@ -64,6 +66,7 @@ describe('Feeds tests', () => {
     })
 
     it("Should follow other people feeds", async () => {
+        // noinspection ES6ShorthandObjectProperty,JSUnusedLocalSymbols
         const {t, user1, user2} = await createTwoUsersWithFeeds();
 
 
@@ -77,6 +80,7 @@ describe('Feeds tests', () => {
     });
 
     it("Should allow unfollowing", async () => {
+        // noinspection ES6ShorthandObjectProperty,JSUnusedLocalSymbols
         const {t, user1, user2} = await createTwoUsersWithFeeds();
 
         await runCommandFromArgs('follow', t.user1FeedUrl);
@@ -87,5 +91,54 @@ describe('Feeds tests', () => {
         const feedsAfterUnfollow = await getFeedFollowsForUser(user2.id);
         expect(feedsAfterUnfollow).length(1);
         expect(feedsAfterUnfollow[0].feedUrl, "Should still follow my own feed").toBe(t.user2FeedUrl);
+    })
+
+    it("Should allow feed to be marked as feteched", async () => {
+        // noinspection ES6ShorthandObjectProperty,JSUnusedLocalSymbols
+        const {t, user1, user2} = await createTwoUsersWithFeeds();
+
+        await runCommandFromArgs('login', user1.name);
+        const feedsAfterCreation = await getFeeds();
+        const targetFeed = feedsAfterCreation[0];
+        expect(targetFeed.last_fetched_at).toBeNull();
+
+        await markFeedAsFetched(feedsAfterCreation[0].id);
+        const feedsAfterFetched  = await getFeeds();
+        //feed we've updated should have last_fetched_at to be not null
+        const targetFeedUpdated = feedsAfterFetched.filter((feed) => {return feed.id === targetFeed.id})[0];
+        expect(targetFeedUpdated.last_fetched_at, "Feed we've updated should have last_fetched_at to be not null").not.toBeNull();
+        expect(targetFeedUpdated.updatedAt, "Updated time should be different").not.toBe(targetFeed.updatedAt);
+        //and the rest should stay null
+        expect(feedsAfterFetched.filter((feed) => {return feed.id !== targetFeed.id})[0].last_fetched_at).toBeNull();
+    })
+
+    it("should get me next feed to fetch", async () => {
+        // noinspection ES6ShorthandObjectProperty,JSUnusedLocalSymbols
+        const {t, user1, user2} = await createTwoUsersWithFeeds();
+
+        const allFeeds = await getFeeds();
+
+        const feedIds = allFeeds.map((feed) => {return feed.id});
+        const feedIdsSet = new Set(feedIds);
+
+        //The logic of the test is:
+        //- all feeds should have last_fetched_at = null
+        //- so get first one, mark it as fetched
+        //- request another one - and it should be different than the first one
+
+        const feed1 = await getNextFeedToFetch();
+        expect(feedIdsSet).toContain(feed1.id);
+        await markFeedAsFetched(feed1.id);
+        feedIdsSet.delete(feed1.id);
+
+        const feed2 = await getNextFeedToFetch();
+        expect(feedIdsSet, "If we've seen this ID, ordering doesn't work properly").toContain(feed2.id);
+        await markFeedAsFetched(feed2.id);
+    })
+
+    it("should be able to scrape feed", async () => {
+        await createTwoUsersWithFeeds();
+        await scrapeFeeds();
+
     })
 });

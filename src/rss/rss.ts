@@ -26,7 +26,7 @@ export async function fetchFeed(url: string): Promise<RSSFeed> {
     if (Array.isArray(items)) {
         for (const item of items) {
             if (item.title !== undefined && item.link !== undefined && item.description !== undefined && item.pubDate !== undefined) {
-                console.log(item);
+                // console.log(item);
                 const rssItem = {
                     title: item.title,
                     link: item.link,

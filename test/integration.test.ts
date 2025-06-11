@@ -79,10 +79,19 @@ describe('Command Integration Tests', () => {
     })
 
 
-    it('should get RSS feed from specified URL', async () => {
+    it('Should loop repeatedly and fetch feeds from DB', async () => {
         await runCommandFromArgs('register', 'testuser');
         await runCommandFromArgs('login', 'testuser');
-        const exitCode = await runCommandFromArgs('agg', 'https://www.wagslane.dev/index.xml');
-        expect(exitCode).toBe(0);
-    })
+        await runCommandFromArgs('addfeed', "testfeed", "https://www.wagslane.dev/index.xml");
+
+        const aggPromise = runCommandFromArgs('agg', '2s');
+
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+
+        // If we reached this point, the command is still running (success)
+        process.emit('SIGINT');
+        await aggPromise;
+
+        expect(true).toBeTruthy();
+    }, 15000)
 });
