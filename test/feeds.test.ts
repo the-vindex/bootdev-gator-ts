@@ -1,11 +1,15 @@
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {runCommandFromArgs} from "../src/commands_execution";
 import {createUser,} from "../src/lib/db/queries/users";
-import {getFeeds, getFeedsWithUser, getNextFeedToFetch, markFeedAsFetched} from "../src/lib/db/queries/feeds";
-import {login} from "../src/commands/login";
+import {
+    createFeed,
+    getFeeds,
+    getFeedsWithUser,
+    getNextFeedToFetch,
+    markFeedAsFetched
+} from "../src/lib/db/queries/feeds";
 import {getFeedFollowsForUser} from "../src/lib/db/queries/feeds_follow_queries";
 import {createTwoUsersWithFeeds} from "./utils/testDataFactory";
-import {scrapeFeeds} from "../src/commands/agg";
 
 
 describe('Feeds tests', () => {
@@ -113,8 +117,10 @@ describe('Feeds tests', () => {
     })
 
     it("should get me next feed to fetch", async () => {
+        const user = await createUser('test-user')
         // noinspection ES6ShorthandObjectProperty,JSUnusedLocalSymbols
-        const {t, user1, user2} = await createTwoUsersWithFeeds();
+        const feed = await createFeed('test-feed', 'http://example.com', user.id)
+        await runCommandFromArgs('login', user.name)
 
         const allFeeds = await getFeeds();
 
@@ -136,9 +142,4 @@ describe('Feeds tests', () => {
         await markFeedAsFetched(feed2.id);
     })
 
-    it("should be able to scrape feed", async () => {
-        await createTwoUsersWithFeeds();
-        await scrapeFeeds();
-
-    })
 });

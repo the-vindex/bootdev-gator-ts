@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Lane's Blog</title>
+    <link>https://wagslane.dev/</link>
+    <description>Recent content on Lane's Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 08 Jan 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://wagslane.dev/index.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>The Zen of Proverbs</title>
+      <link>https://wagslane.dev/posts/zen-of-proverbs/</link>
+      <pubDate>Sun, 08 Jan 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://wagslane.dev/posts/zen-of-proverbs/</guid>
+      <description>20 rules of thumb for writing better software.
+Optimize for simplicity first Write code for humans, not computers Reading is more important than writing Any style is fine, as long as it&amp;rsquo;s black There should be one way to do it, but seriously this time Hide the sharp knives Changing the rules is better than adding exceptions Libraries are better than frameworks Transitive dependencies are a problem Dynamic runtime dependencies are a bigger problem API surface area is a liability Returning early is a good thing Use more plain text Compiler errors are better than runtime errors Runtime errors are better than bugs Tooling is better than documentation Documentation is better than nothing Configuration sucks, but so does convention The cost of building a feature is its smallest cost Types are one honking great idea &amp;ndash; let&amp;rsquo;s do more of those!</description>
+    </item>
+    
+    <item>
+      <title>College: A Solution in Search of a Problem</title>
+      <link>https://wagslane.dev/posts/college-a-solution-in-search-of-a-problem/</link>
+      <pubDate>Sat, 17 Dec 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wagslane.dev/posts/college-a-solution-in-search-of-a-problem/</guid>
+      <description>College has been prescribed almost universally by the parents of the last ~40 years as the solution to life&amp;rsquo;s problems. We&amp;rsquo;ve been told it&amp;rsquo;s the way to land a good job and to make more money. But is it?
+I think that most college degrees these days commit a cardinal sin in the business world. College degrees are solutions in search of a problem.
+What is a solution in search of a problem?</description>
+    </item>
+
+    
+  </channel>
+</rss>

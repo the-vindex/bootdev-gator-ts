@@ -1,6 +1,7 @@
 import {fetchFeed} from "../rss/rss";
 import {getNextFeedToFetch, markFeedAsFetched} from "../lib/db/queries/feeds";
 import {formatDuration, parseDuration} from "../utils/duration_parsing";
+import {createPost} from "../lib/db/queries/posts";
 
 export async function agg(commandName: string, ...args: string[]) {
     if (args.length === 0) {
@@ -42,9 +43,20 @@ export async function scrapeFeeds() {
 
     if (feedItems.length > 0) {
         console.log(`Found ${feedItems.length} items`);
-        feedItems.forEach(item => {
-            console.log(`- ${item.title}`)
-        });
+        for (const item of feedItems) {
+            try {
+                await createPost({
+                    title: item.title,
+                    url: item.link,
+                    description: item.description,
+                    published_at: item.pubDate ? new Date(item.pubDate) : null,
+                    feed_id: feedToFetch.id
+                });
+            } catch (error) {
+                console.error(`Failed to create post: ${error}`);
+            }
+            //TODO ignore duplicate URL errors
+        }
     }
 
 }

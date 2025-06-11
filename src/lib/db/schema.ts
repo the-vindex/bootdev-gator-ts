@@ -34,3 +34,21 @@ export const feed_follows = pgTable('feed_follows', {
         userFeedUnique: unique().on(table.user_id, table.feed_id)
     }
 });
+
+
+export const posts = pgTable('posts', {
+    id: uuid('id').primaryKey().defaultRandom(),
+    created_at: timestamp('created_at').notNull().defaultNow(),
+    updated_at: timestamp('updated_at').notNull().defaultNow(),
+    title: text('title').notNull(),
+    url: text('url').notNull(),
+    description: text('description'),  // Can be null since some RSS items might not have descriptions
+    published_at: timestamp('published_at'),  // Can be null if not provided in the feed
+    feed_id: uuid('feed_id')
+        .notNull()
+        .references(() => feeds.id, { onDelete: 'cascade' })  // If feed is deleted, delete its posts
+}, (table) => {
+    return {
+        postUnique: unique().on(table.url, table.feed_id)
+    }
+});
