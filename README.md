@@ -1,7 +1,7 @@
 
 # TypeScript Feed Reader Backend
 
-Gator is a modern TypeScript-based backend service for managing RSS/Atom feeds and their posts. This project provides a robust API for creating and managing feed subscriptions and their associated posts.
+gator is a modern TypeScript-based backend service for managing RSS/Atom feeds and their posts. This project provides a robust API for creating and managing feed subscriptions and their associated posts.
 
 ## Features
 
