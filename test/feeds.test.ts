@@ -119,7 +119,8 @@ describe('Feeds tests', () => {
     it("should get me next feed to fetch", async () => {
         const user = await createUser('test-user')
         // noinspection ES6ShorthandObjectProperty,JSUnusedLocalSymbols
-        const feed = await createFeed('test-feed', 'http://example.com', user.id)
+        await createFeed('test-feed', 'http://example.com', user.id)
+        await createFeed('test-feed 2', 'http://example2.com', user.id)
         await runCommandFromArgs('login', user.name)
 
         const allFeeds = await getFeeds();
